@@ -1210,6 +1210,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             return false;
         }
         Editable editable = getText();
+        int length = editable.length();
+        editable.delete(length - 1, length);
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
 
@@ -1232,7 +1234,11 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (mTokenizer == null) {
             return;
         }
+        Log.d("debug", "Once ?");
         Editable editable = getText();
+        int length = editable.length();
+        editable.delete(length - 1, length);
+
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
         if (shouldCreateChip(start, end)) {
@@ -1450,6 +1456,13 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             mSelectedChip = null;
         }
         setCursorVisible(true);
+    }
+
+    private boolean isLastCharACommit(Editable editable) {
+        int lastCharPosition = length() - 1;
+        return editable.charAt(lastCharPosition) == COMMIT_CHAR_COMMA
+                || editable.charAt(lastCharPosition) == COMMIT_CHAR_SPACE
+                || editable.charAt(lastCharPosition) == COMMIT_CHAR_SEMICOLON;
     }
 
     /**
@@ -2426,7 +2439,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         } else {
             last = s.charAt(len);
         }
-        return last == COMMIT_CHAR_COMMA || last == COMMIT_CHAR_SEMICOLON;
+        return last == COMMIT_CHAR_COMMA
+                || last == COMMIT_CHAR_SEMICOLON;
     }
 
     public boolean isGeneratedContact(DrawableRecipientChip chip) {
