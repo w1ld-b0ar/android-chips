@@ -145,6 +145,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private boolean mNoChips = false;
 
+    private boolean isRemovingLastCommitChar = false;
+
     private ListPopupWindow mAlternatesPopup;
 
     private ListPopupWindow mAddressPopup;
@@ -1211,7 +1213,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
         Editable editable = getText();
         int length = editable.length();
-        editable.delete(length - 1, length);
+        Log.i("DEBUG", "Text length: " + length + "; Cursor position: " + getSelectionEnd());
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
 
@@ -1234,10 +1236,12 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (mTokenizer == null) {
             return;
         }
-        Log.d("debug", "Once ?");
+
+        removeCommitCharBeforeCreatingChip();
+
         Editable editable = getText();
         int length = editable.length();
-        editable.delete(length - 1, length);
+        Log.i("DEBUG", "Text length: " + length + "; Cursor position: " + getSelectionEnd());
 
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
@@ -2199,7 +2203,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * Return whether a touch event was inside the delete target of
      * a selected chip. It is in the delete target if:
      * 1) the x and y points of the event are within the
-     * delete assset.
+     * delete asset.
      * 2) the point tapped would have caused a cursor to appear
      * right after the selected chip.
      * @return boolean
@@ -2391,6 +2395,12 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // If the triggering commit char is being deleted before processing the text,
+            // the listener is disabled
+            if (isRemovingLastCommitChar) {
+                return;
+            }
+
             // The user deleted some text OR some text was replaced; check to
             // see if the insertion point is on a space
             // following a chip.
@@ -2430,17 +2440,28 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
     }
 
-   public boolean lastCharacterIsCommitCharacter(CharSequence s) {
+    public boolean lastCharacterIsCommitCharacter(CharSequence s) {
         char last;
         int end = getSelectionEnd() == 0 ? 0 : getSelectionEnd() - 1;
-        int len = length() - 1;
-        if (end != len) {
-            last = s.charAt(end);
-        } else {
-            last = s.charAt(len);
-        }
+        last = s.charAt(end);
         return last == COMMIT_CHAR_COMMA
                 || last == COMMIT_CHAR_SEMICOLON;
+    }
+
+    /**
+     * Removes the commit char that triggers the creation of the token before using the
+     * enoughToFilter method.
+     */
+    private void removeCommitCharBeforeCreatingChip() {
+        isRemovingLastCommitChar = true;
+        Editable s = getEditableText();
+        char last;
+        int end = getSelectionEnd() == 0 ? 0 : getSelectionEnd() - 1;
+        last = s.charAt(end);
+        if (last == COMMIT_CHAR_COMMA || last == COMMIT_CHAR_SEMICOLON) {
+            s.delete(end, end + 1);
+        }
+        isRemovingLastCommitChar = false;
     }
 
     public boolean isGeneratedContact(DrawableRecipientChip chip) {
