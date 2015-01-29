@@ -1245,8 +1245,12 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
+
         if (shouldCreateChip(start, end)) {
+            setError(null);
             commitChip(start, end, editable);
+        } else {
+            setError("This is not a valid phone number !");
         }
         setSelection(getText().length());
     }
@@ -1269,10 +1273,10 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             }
             String text = editable.toString().substring(start, tokenEnd).trim();
             clearComposingText();
-            if (text != null && text.length() > 0 && !text.equals(" ")) {
+            if (text != null && text.length() > 0) {
                 RecipientEntry entry = createTokenizedEntry(text);
                 if (entry != null) {
-                    QwertyKeyListener.markAsReplaced(editable, start, end, "");
+                    QwertyKeyListener.markAsReplaced(editable, start, end, text);
                     CharSequence chipText = createChip(entry, false);
                     if (chipText != null && start > -1 && end > -1) {
                         editable.replace(start, end, chipText);
@@ -1292,8 +1296,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         return false;
     }
 
-    // Visible for testing.
-    /* package */ void sanitizeBetween() {
+    protected void sanitizeBetween() {
         // Don't sanitize while we are waiting for content to chipify.
         if (mPendingChipsCount > 0) {
             return;
@@ -1354,7 +1357,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         String text = getText().toString().substring(start, end);
         if (!TextUtils.isEmpty(text)) {
             RecipientEntry entry = RecipientEntry.constructFakeEntry(text, isValid(text));
-            QwertyKeyListener.markAsReplaced(editable, start, end, "");
+            QwertyKeyListener.markAsReplaced(editable, start, end, text);
             CharSequence chipText = createChip(entry, false);
             int selEnd = getSelectionEnd();
             if (chipText != null && start > -1 && selEnd > -1) {
@@ -1770,7 +1773,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         int start = mTokenizer.findTokenStart(getText(), end);
 
         Editable editable = getText();
-        QwertyKeyListener.markAsReplaced(editable, start, end, "");
+        QwertyKeyListener.markAsReplaced(editable, start, end, editable.subSequence(start, end).toString());
         CharSequence chip = createChip(entry, false);
         if (chip != null && start >= 0 && end >= 0) {
             editable.replace(start, end, chip);
@@ -1816,7 +1819,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     /** Returns a collection of data Id for each chip inside this View. May be null. */
     /* package */ Collection<Long> getDataIds() {
-        final Set<Long> result = new HashSet<Long>();
+        final Set<Long> result = new HashSet<>();
         DrawableRecipientChip [] chips = getSortedRecipients();
         if (chips != null) {
             for (DrawableRecipientChip chip : chips) {
@@ -1827,10 +1830,10 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     public DrawableRecipientChip[] getRecipients() {
-        DrawableRecipientChip[] recips = getSpannable()
+        DrawableRecipientChip[] recipients = getSpannable()
                 .getSpans(0, getText().length(), DrawableRecipientChip.class);
-        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<DrawableRecipientChip>(
-                Arrays.asList(recips));
+        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<>(
+                Arrays.asList(recipients));
         try { recipientsList.addAll(mRemovedSpans); } catch (Exception e) {}
         return recipientsList.toArray(new DrawableRecipientChip[recipientsList.size()]);
     }
@@ -1838,7 +1841,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     public DrawableRecipientChip[] getSortedRecipients() {
         DrawableRecipientChip[] recips = getSpannable()
                 .getSpans(0, getText().length(), DrawableRecipientChip.class);
-        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<DrawableRecipientChip>(
+        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<>(
                 Arrays.asList(recips));
         final Spannable spannable = getSpannable();
         Collections.sort(recipientsList, new Comparator<DrawableRecipientChip>() {
@@ -1973,7 +1976,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         int numRecipients = recipients.length;
         int overage = numRecipients - CHIP_LIMIT;
         MoreImageSpan moreSpan = createMoreSpan(overage);
-        mRemovedSpans = new ArrayList<DrawableRecipientChip>();
+        mRemovedSpans = new ArrayList<>();
         int totalReplaceStart = 0;
         int totalReplaceEnd = 0;
         Editable text = getText();
