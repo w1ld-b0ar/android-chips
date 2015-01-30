@@ -1896,17 +1896,12 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         TextPaint morePaint = new TextPaint(getPaint());
         morePaint.setTextSize(mMoreItem.getTextSize());
         morePaint.setColor(mMoreItem.getCurrentTextColor());
-        int width = (int)morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
+        int width = (int) morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
                 + mMoreItem.getPaddingRight();
-        int height = getLineHeight();
+        int height = (int) mChipHeight;
         Bitmap drawable = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(drawable);
-        int adjustedHeight = height;
-        Layout layout = getLayout();
-        if (layout != null) {
-            adjustedHeight -= layout.getLineDescent(0);
-        }
-        canvas.drawText(moreText, 0, moreText.length(), 0, adjustedHeight, morePaint);
+        canvas.drawText(moreText, 0, moreText.length(), 0, getTextYOffset(moreText, morePaint, height), morePaint);
 
         Drawable result = new BitmapDrawable(getResources(), drawable);
         result.setBounds(0, 0, width, height);
