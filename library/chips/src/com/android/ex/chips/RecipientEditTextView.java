@@ -237,10 +237,17 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     public RecipientEditTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        // Doesn't execute the code if is in EditMode
+        if (isInEditMode()) {
+            return;
+        }
+
         setChipDimensions(context, attrs);
         if (sSelectedTextColor == -1) {
             sSelectedTextColor = context.getResources().getColor(android.R.color.white);
         }
+
         mAlternatesPopup = new ListPopupWindow(context);
         mAddressPopup = new ListPopupWindow(context);
         mCopyDialog = new Dialog(context);
@@ -634,8 +641,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * the layout direction is LTR or RTL.
      */
     private boolean shouldPositionAvatarOnRight() {
-        final boolean isRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ?
-                getLayoutDirection() == LAYOUT_DIRECTION_RTL : false;
+        final boolean isRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
+                getLayoutDirection() == LAYOUT_DIRECTION_RTL;
         final boolean assignedPosition = mAvatarPosition == AVATAR_POSITION_END;
         // If in Rtl mode, the position should be flipped.
         return isRtl ? !assignedPosition : assignedPosition;
@@ -716,7 +723,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         Bitmap tmpBitmap;
         if (pressed) {
             tmpBitmap = createSelectedChip(contact, paint);
-
         } else {
             tmpBitmap = createUnselectedChip(contact, paint, leaveIconSpace);
         }
@@ -724,6 +730,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         // Pass the full text, un-ellipsized, to the chip.
         Drawable result = new BitmapDrawable(getResources(), tmpBitmap);
         result.setBounds(0, 0, tmpBitmap.getWidth(), tmpBitmap.getHeight());
+
         DrawableRecipientChip recipientChip =
                 new VisibleRecipientChip(result, contact, getImageSpanAlignment());
         // Return text to the original size.
@@ -749,6 +756,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * 2) the height of a chip
      * 3) padding built into the edit text view
      */
+    // XXX: change the padding in a weird way
     private int calculateOffsetFromBottom(int line) {
         // Line offsets start at zero.
         int actualLine = getLineCount() - (line + 1);
@@ -761,6 +769,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * account the width of the EditTextView, any view padding, and padding
      * that will be added to the chip.
      */
+    // XXX: need to take into account the more chip width
     private float calculateAvailableWidth() {
         return getWidth() - getPaddingLeft() - getPaddingRight() - (mChipPadding * 2);
     }
@@ -1708,7 +1717,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (TextUtils.isEmpty(displayText)) {
             return null;
         }
-        SpannableString chipText = null;
+        SpannableString chipText;
         // Always leave a blank space at the end of a chip.
         int textLength = displayText.length() - 1;
         chipText = new SpannableString(displayText);
@@ -1763,6 +1772,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         submitItem(entry);
     }
 
+    // XXX: the contact chip is created here
     private void submitItem(RecipientEntry entry) {
         if (entry == null) {
             return;
@@ -2678,7 +2688,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                         @Override
                         public void matchesNotFound(final Set<String> unfoundAddresses) {
                             final List<DrawableRecipientChip> replacements =
-                                    new ArrayList<DrawableRecipientChip>(unfoundAddresses.size());
+                                    new ArrayList<>(unfoundAddresses.size());
 
                             for (final DrawableRecipientChip temp : recipients) {
                                 if (temp != null && RecipientEntry.isCreatedRecipient(
@@ -2931,7 +2941,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     /**
-     * Drag shadow for a {@link RecipientChip}.
+     * Drag shadow for a RecipientChip.
      */
     private final class RecipientChipShadow extends DragShadowBuilder {
         private final DrawableRecipientChip mChip;
