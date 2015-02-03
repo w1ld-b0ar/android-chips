@@ -20,8 +20,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.util.Log;
 
 import com.android.ex.chips.RecipientEntry;
 
@@ -134,11 +136,11 @@ public class VisibleRecipientChip extends ImageSpan implements DrawableRecipient
                 extraSpace = rect.bottom - (fm.descent - fm.ascent);
             }
 
-            fm.bottom = extraSpace / 2 + initialDescent;
-            fm.descent = fm.bottom;
+            fm.descent = extraSpace / 2 + initialDescent;
+            fm.bottom = fm.descent;
 
-            fm.top = -rect.bottom + fm.bottom;
-            fm.ascent = fm.top;
+            fm.ascent = -rect.bottom + fm.descent;
+            fm.top = fm.ascent;
         }
 
         return rect.right;

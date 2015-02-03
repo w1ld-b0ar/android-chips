@@ -26,6 +26,7 @@ import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.net.Uri;
 import android.os.*;
 import android.text.*;
@@ -727,9 +728,13 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             tmpBitmap = createUnselectedChip(contact, paint, leaveIconSpace);
         }
 
+        // Get the inset of the chip
+        int chipInset = (int) (getResources().getDimension(R.dimen.line_spacing_extra) / 2);
+
         // Pass the full text, un-ellipsized, to the chip.
         Drawable result = new BitmapDrawable(getResources(), tmpBitmap);
-        result.setBounds(0, 0, tmpBitmap.getWidth(), tmpBitmap.getHeight());
+        result = new InsetDrawable(result, 0, chipInset, 0, chipInset);
+        result.setBounds(0, 0, tmpBitmap.getWidth(), tmpBitmap.getHeight() + 2 * chipInset);
 
         DrawableRecipientChip recipientChip =
                 new VisibleRecipientChip(result, contact, getImageSpanAlignment());
