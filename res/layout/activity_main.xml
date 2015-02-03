@@ -29,30 +29,28 @@
             android:id="@+id/address_suffix"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginTop="@dimen/address_prefix_top_margin"
+            android:layout_marginLeft="@dimen/address_prefix_lr_margin"
+            android:layout_marginStart="@dimen/address_prefix_lr_margin"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:textSize="20sp"
+            android:textSize="@dimen/address_prefix_text_size"
             android:textColor="@android:color/darker_gray"
             android:text="@string/address_field_prefix"/>
 
+        <!-- The minHeight should be equal to the chipHeight + the lineExtraSpacing -->
         <com.android.ex.chips.RecipientEditTextView
             android:id="@+id/phone_retv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="28dp"
+            android:minHeight="32dp"
             android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
             android:layout_toRightOf="@id/address_suffix"
             android:layout_toEndOf="@id/address_suffix"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_margin="@dimen/chips_textfield_margin"
             android:gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:hint="@string/phone_numbers"/>
 
         <ImageButton
@@ -67,13 +65,14 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/separator_width"
         android:background="@android:color/darker_gray" />
 
+    <!-- Dummy EditText allowing the user to focus something else than the chips field -->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_margin="30dp"
         android:inputType="text"
         android:hint="@string/focus_test_field"/>
 
