@@ -17,6 +17,7 @@
 package com.android.ex.chips.recipientchip;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.style.DynamicDrawableSpan;
@@ -24,12 +25,18 @@ import android.text.style.ImageSpan;
 
 import com.android.ex.chips.RecipientEntry;
 
+import java.lang.ref.WeakReference;
+
 /**
  * VisibleRecipientChip defines an ImageSpan that contains information relevant to a
  * particular recipient and renders a background asset to go with it.
  */
 public class VisibleRecipientChip extends ImageSpan implements DrawableRecipientChip {
     private final SimpleRecipientChip mDelegate;
+
+    // Extra variables used to redefine the Font Metrics when an ImageSpan is added
+    private static int initialDescent = 0;
+    private static int extraSpace = 0;
 
     public VisibleRecipientChip(final Drawable drawable, final RecipientEntry entry) {
         this(drawable, entry, DynamicDrawableSpan.ALIGN_BOTTOM);
@@ -111,4 +118,47 @@ public class VisibleRecipientChip extends ImageSpan implements DrawableRecipient
     public String toString() {
         return mDelegate.toString();
     }
+
+    // Method used to redefined the Font Metrics when an ImageSpan is added
+    @Override
+    public int getSize(Paint paint, CharSequence text,
+                       int start, int end,
+                       Paint.FontMetricsInt fm) {
+        Drawable d = getCachedDrawable();
+        Rect rect = d.getBounds();
+
+        if (fm != null) {
+            if (extraSpace == 0) {
+                // Stores the initial descent and computes the margin available
+                initialDescent = fm.descent;
+                extraSpace = rect.bottom - (fm.descent - fm.ascent);
+            }
+
+            fm.bottom = extraSpace / 2 + initialDescent;
+            fm.descent = fm.bottom;
+
+            fm.top = -rect.bottom + fm.bottom;
+            fm.ascent = fm.top;
+        }
+
+        return rect.right;
+    }
+
+    // Redefined locally because it is a private member from DynamicDrawableSpan
+    private Drawable getCachedDrawable() {
+        WeakReference<Drawable> wr = mDrawableRef;
+        Drawable d = null;
+
+        if (wr != null)
+            d = wr.get();
+
+        if (d == null) {
+            d = getDrawable();
+            mDrawableRef = new WeakReference<>(d);
+        }
+
+        return d;
+    }
+
+    private WeakReference<Drawable> mDrawableRef;
 }

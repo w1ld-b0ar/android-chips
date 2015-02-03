@@ -1081,7 +1081,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             return RecipientEntry.constructFakePhoneEntry(token, true);
         }
         Rfc822Token[] tokens = Rfc822Tokenizer.tokenize(token);
-        String display = null;
+        String display;
         boolean isValid = isValid(token);
         if (isValid && tokens != null && tokens.length > 0) {
             // If we can get a name from tokenizing, then generate an entry from
@@ -1093,7 +1093,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             } else {
                 display = tokens[0].getAddress();
                 if (!TextUtils.isEmpty(display)) {
-                    return RecipientEntry.constructFakeEntry(display, isValid);
+                    return RecipientEntry.constructFakeEntry(display, true);
                 }
             }
         }
@@ -1130,7 +1130,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     private boolean isValid(String text) {
-        return mValidator == null ? true : mValidator.isValid(text);
+        return mValidator == null || mValidator.isValid(text);
     }
 
     private static String tokenizeAddress(String destination) {
@@ -1472,13 +1472,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             mSelectedChip = null;
         }
         setCursorVisible(true);
-    }
-
-    private boolean isLastCharACommit(Editable editable) {
-        int lastCharPosition = length() - 1;
-        return editable.charAt(lastCharPosition) == COMMIT_CHAR_COMMA
-                || editable.charAt(lastCharPosition) == COMMIT_CHAR_SPACE
-                || editable.charAt(lastCharPosition) == COMMIT_CHAR_SEMICOLON;
     }
 
     /**
@@ -2344,6 +2337,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 Spannable spannable = getSpannable();
                 DrawableRecipientChip[] chips = spannable.getSpans(0, getText().length(),
                         DrawableRecipientChip.class);
+
                 for (DrawableRecipientChip chip : chips) {
                     spannable.removeSpan(chip);
                 }
