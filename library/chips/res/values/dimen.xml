@@ -15,10 +15,10 @@
 -->
 
 <resources>
-    <dimen name="chip_padding">12dip</dimen>
-    <dimen name="chip_height">28dip</dimen>
+    <dimen name="chip_padding">12dp</dimen>
+    <dimen name="chip_height">28dp</dimen>
     <dimen name="chip_text_size">14sp</dimen>
-    <dimen name="line_spacing_extra">4dip</dimen>
+    <dimen name="line_spacing_extra">4dp</dimen>
     <integer name="chips_max_lines">-1</integer>
     <dimen name="extra_chip_height">4dp</dimen>
 
