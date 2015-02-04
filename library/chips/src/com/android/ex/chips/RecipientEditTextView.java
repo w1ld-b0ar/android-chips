@@ -138,7 +138,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     private TextView mMoreItem;
 
     // VisibleForTesting
-    final ArrayList<String> mPendingChips = new ArrayList<String>();
+    final ArrayList<String> mPendingChips = new ArrayList<>();
 
     private Handler mHandler;
 
@@ -474,8 +474,14 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             return;
         }
         long contactId = mSelectedChip != null ? mSelectedChip.getEntry().getContactId() : -1;
+
+        if (mSelectedChip != null && contactId != RecipientEntry.INVALID_CONTACT) {
+            clearSelectedChip();
+        }
+
         if (mSelectedChip != null && contactId != RecipientEntry.INVALID_CONTACT
                 && (!isPhoneQuery() && contactId != RecipientEntry.GENERATED_CONTACT)) {
+
             clearSelectedChip();
         } else {
             if (getWidth() <= 0) {
@@ -1057,7 +1063,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             // Add this chip to the list of entries "to replace"
             if (chip != null) {
                 if (mTemporaryRecipients == null) {
-                    mTemporaryRecipients = new ArrayList<DrawableRecipientChip>();
+                    mTemporaryRecipients = new ArrayList<>();
                 }
                 chip.setOriginalText(token);
                 mTemporaryRecipients.add(chip);
@@ -1392,6 +1398,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 mAlternatesPopup.dismiss();
             }
             removeChip(mSelectedChip);
+            return true;
         }
 
         switch (keyCode) {
@@ -2429,6 +2436,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 int selStart = getSelectionStart();
                 DrawableRecipientChip[] repl = getSpannable().getSpans(selStart, selStart,
                         DrawableRecipientChip.class);
+
                 if (repl.length > 0) {
                     // There is a chip there! Just remove it.
                     Editable editable = getText();
