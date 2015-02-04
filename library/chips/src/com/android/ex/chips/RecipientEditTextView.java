@@ -1906,14 +1906,21 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         morePaint.setColor(mMoreItem.getCurrentTextColor());
         int width = (int)morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
                 + mMoreItem.getPaddingRight();
-        int height = getLineHeight();
-        Bitmap drawable = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(drawable);
-        int adjustedHeight = height;
+
+        int height;
+        int adjustedHeight;
         Layout layout = getLayout();
         if (layout != null) {
-            adjustedHeight -= layout.getLineDescent(0);
+            height = -layout.getLineAscent(0);
+            // The +1 takes into account the rounded int, that can make the text being cropped
+            adjustedHeight = height - layout.getLineDescent(0) + 1;
+        } else {
+            height = getLineHeight();
+            adjustedHeight = height;
         }
+
+        Bitmap drawable = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(drawable);
         canvas.drawText(moreText, 0, moreText.length(), 0, adjustedHeight, morePaint);
 
         Drawable result = new BitmapDrawable(getResources(), drawable);
