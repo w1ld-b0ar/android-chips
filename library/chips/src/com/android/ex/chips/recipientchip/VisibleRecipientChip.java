@@ -36,6 +36,8 @@ import java.lang.ref.WeakReference;
 public class VisibleRecipientChip extends ImageSpan implements DrawableRecipientChip {
     private final SimpleRecipientChip mDelegate;
 
+    // XXX: shouldn't be using static variable because if two RecipientEditTextView are used,
+    // it can result in very weird things.
     // Extra variables used to redefine the Font Metrics when an ImageSpan is added
     private static int initialDescent = 0;
     private static int extraSpace = 0;
@@ -121,6 +123,11 @@ public class VisibleRecipientChip extends ImageSpan implements DrawableRecipient
         return mDelegate.toString();
     }
 
+
+    //
+    // Following methods are overriden from DynamicDrawableSpan.
+    //
+
     // Method used to redefined the Font Metrics when an ImageSpan is added
     @Override
     public int getSize(Paint paint, CharSequence text,
@@ -130,7 +137,8 @@ public class VisibleRecipientChip extends ImageSpan implements DrawableRecipient
         Rect rect = d.getBounds();
 
         if (fm != null) {
-            if (extraSpace == 0) {
+            // Centers the text with the chips
+            if (initialDescent == 0) {
                 // Stores the initial descent and computes the margin available
                 initialDescent = fm.descent;
                 extraSpace = rect.bottom - (fm.descent - fm.ascent);
