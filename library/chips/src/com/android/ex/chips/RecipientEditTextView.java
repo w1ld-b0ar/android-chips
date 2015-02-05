@@ -2440,9 +2440,23 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 if (repl.length > 0) {
                     // There is a chip there! Just remove it.
                     Editable editable = getText();
+
                     // Add the separator token.
-                    int tokenStart = mTokenizer.findTokenStart(editable, selStart);
+                    int tokenStart = 0;
+                    if (selStart == editable.length()) {
+                        tokenStart = mTokenizer.findTokenStart(editable, selStart);
+                    } else if (selStart != 0) {
+                        tokenStart = mTokenizer.findTokenStart(editable, selStart - 1);
+                    }
                     int tokenEnd = mTokenizer.findTokenEnd(editable, tokenStart);
+
+                    // If start and end are set on the token instead of the recipient,
+                    // look for another starting point
+                    if (tokenEnd != 0 && tokenStart == tokenEnd) {
+                        tokenStart = mTokenizer.findTokenStart(editable, tokenEnd - 1);
+                    }
+
+                    // Increments the tokenEnd to include the commit character.
                     tokenEnd = tokenEnd + 1;
                     if (tokenEnd > editable.length()) {
                         tokenEnd = editable.length();
