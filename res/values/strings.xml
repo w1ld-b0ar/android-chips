@@ -17,7 +17,7 @@
 
     <string name="app_name" translatable="false">Chips Sample</string>
     <string name="email_addresses">Email Addresses</string>
-    <string name="focus_test_field">Click here to lose the chips field focus.</string>
+    <string name="message_field">Compose message</string>
     <string name="phone_numbers">Phone Numbers</string>
     <string name="address_field_prefix">To: </string>
 

@@ -14,7 +14,6 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
@@ -68,12 +67,18 @@
         android:layout_height="@dimen/separator_width"
         android:background="@android:color/darker_gray" />
 
-    <!-- Dummy EditText allowing the user to focus something else than the chips field -->
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/address_prefix_top_margin"
+        android:layout_marginLeft="@dimen/address_prefix_lr_margin"
+        android:layout_marginStart="@dimen/address_prefix_lr_margin"
+        android:layout_marginRight="@dimen/address_prefix_lr_margin"
+        android:layout_marginEnd="@dimen/address_prefix_lr_margin"
+        android:background="@android:color/transparent"
+        android:gravity="top"
         android:inputType="text"
-        android:hint="@string/focus_test_field"/>
+        android:hint="@string/message_field"/>
 
 </LinearLayout>
