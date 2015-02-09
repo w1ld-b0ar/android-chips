@@ -1777,7 +1777,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         submitItem(entry);
     }
 
-    // XXX: the contact chip is created here
     private void submitItem(RecipientEntry entry) {
         if (entry == null) {
             return;

@@ -242,7 +242,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
 
             if (constraint.equals("Choose Contacts:")) {
                 limitResults = false;
-                constraint = " ";
+                constraint = "";
             }
 
             try {
@@ -935,6 +935,10 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
     }
 
     private Cursor doQuery(CharSequence constraint, int limit, Long directoryId) {
+        if (constraint == null || constraint.equals("")) {
+            return null;
+        }
+
         final Uri.Builder builder = mQuery.getContentFilterUri().buildUpon();
         builder.appendPath(constraint.toString());
         builder.appendQueryParameter(ContactsContract.LIMIT_PARAM_KEY,
@@ -944,17 +948,44 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
             builder.appendQueryParameter(ContactsContract.DIRECTORY_PARAM_KEY,
                     String.valueOf(directoryId));
         }
+
         if (mAccount != null) {
             builder.appendQueryParameter(PRIMARY_ACCOUNT_NAME, mAccount.name);
             builder.appendQueryParameter(PRIMARY_ACCOUNT_TYPE, mAccount.type);
         }
-        String where = (showMobileOnly && mQueryType == QUERY_TYPE_PHONE) ?
+
+        // Query parameters
+        Uri uri = limit == -1 ? mQuery.getContentUri() : builder.build();
+        String[] projection = mQuery.getProjection();
+        String selection = (showMobileOnly && mQueryType == QUERY_TYPE_PHONE) ?
                 ContactsContract.CommonDataKinds.Phone.TYPE + "=" + ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE : null;
+        List<String> selectionParameters = new ArrayList<>();
+        String sortOrder = limit == -1 ? ContactsContract.Contacts.DISPLAY_NAME + " ASC" : null;
+
+        // Following code fixes the conversion of alphabetic letters to digits when typing a name.
+        // Please note that there might be better ways to do it, but this is what I ended up to do.
+        // Reasoning: if the constraint does not contain any numbers, look for a name only.
+        if(constraint.toString().matches(".*\\d.*")){
+            // Contains a number
+            selectionParameters = null;
+        } else{
+            // Does not contain a number
+            if (selection != null) {
+                selection = selection + " AND " + ContactsContract.Data.DISPLAY_NAME + " LIKE ?";
+            }
+            selectionParameters.add("%" + constraint + "%");
+        }
+
+        String[] selectionParametersArray = selectionParameters == null ?
+                null : selectionParameters.toArray(new String[selectionParameters.size()]);
+
         final long start = System.currentTimeMillis();
         final Cursor cursor = mContentResolver.query(
-                limit == -1 ? mQuery.getContentUri() : builder.build(), mQuery.getProjection(),
-                where, null,
-                limit == -1 ? ContactsContract.Contacts.DISPLAY_NAME + " ASC" : null);
+                uri,
+                projection,
+                selection,
+                selectionParametersArray,
+                sortOrder);
         final long end = System.currentTimeMillis();
         if (DEBUG) {
             Log.d(TAG, "Time for autocomplete (query: " + constraint
@@ -962,6 +993,9 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
                     + (cursor != null ? cursor.getCount() : "null") + "): "
                     + (end - start) + " ms");
         }
+
+        // XXX: Projection: Projection - [display_name, data1, data2, data3, contact_id, _id, photo_thumb_uri, display_name_source, lookup, mimetype]
+
         return cursor;
     }
 
