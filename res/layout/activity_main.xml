@@ -53,14 +53,6 @@
             android:background="@android:color/transparent"
             android:hint="@string/phone_numbers"/>
 
-        <ImageButton
-            android:id="@+id/show_all"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:src="@android:drawable/ic_input_add"/>
-
     </RelativeLayout>
 
     <View
