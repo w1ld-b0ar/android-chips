@@ -224,6 +224,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private int mMaxLines;
 
+    private int mMaxChipsAllowed = 99;
+
     private static int sExcessTopPadding = -1;
 
     private int mActionBarHeight;
@@ -551,6 +553,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (maxWidth <= 0 && Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "Max width is negative: " + maxWidth);
         }
+
         return TextUtils.ellipsize(text, paint, maxWidth,
                 TextUtils.TruncateAt.END);
     }
@@ -603,6 +606,14 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         // autocomplete text entry area. Make sure to leave space for padding
         // on the sides.
         int height = (int) mChipHeight + getResources().getDimensionPixelSize(R.dimen.extra_chip_height);
+
+        // Compute the space needed by the more chip before ellipsizing
+        String moreText = String.format(mMoreItem.getText().toString(), mMaxChipsAllowed);
+        TextPaint morePaint = new TextPaint(getPaint());
+        morePaint.setTextSize(mMoreItem.getTextSize());
+        int moreChipWidth = (int) morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
+                + mMoreItem.getPaddingRight();
+
         // Since the icon is a square, it's width is equal to the maximum height it can be inside
         // the chip.
         int iconWidth = height - backgroundPadding.top - backgroundPadding.bottom;
@@ -610,7 +621,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         paint.getTextWidths(" ", widths);
         CharSequence ellipsizedText = ellipsizeText(createChipDisplayText(contact), paint,
                 calculateAvailableWidth() - iconWidth - widths[0] - backgroundPadding.left
-                    - backgroundPadding.right);
+                    - backgroundPadding.right - moreChipWidth);
         int textWidth = (int) paint.measureText(ellipsizedText, 0, ellipsizedText.length());
 
         // Make sure there is a minimum chip width so the user can ALWAYS
@@ -787,7 +798,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         return getWidth() - getPaddingLeft() - getPaddingRight() - (mChipPadding * 2);
     }
 
-
     private void setChipDimensions(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RecipientEditTextView, 0,
                 0);
@@ -861,6 +871,14 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     public float getChipHeight() {
         return mChipHeight;
+    }
+
+    public void setMaxNumberOfChipsAllowed(int numberOfChipsAllowed) {
+        mMaxChipsAllowed = numberOfChipsAllowed;
+    }
+
+    public int getMaxNumberOfChipsAllowed() {
+        return mMaxChipsAllowed;
     }
 
     /**
@@ -1926,7 +1944,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         TextPaint morePaint = new TextPaint(getPaint());
         morePaint.setTextSize(mMoreItem.getTextSize());
         morePaint.setColor(mMoreItem.getCurrentTextColor());
-        int width = (int)morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
+        int width = (int) morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
                 + mMoreItem.getPaddingRight();
 
         int height;
@@ -2005,19 +2023,56 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
         DrawableRecipientChip[] recipients = getSortedRecipients();
 
-        if (recipients == null || recipients.length <= CHIP_LIMIT) {
+        int fieldWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+        // Compute the width of a blank space because there should be one between each chip
+        TextPaint fieldPaint = new TextPaint(getPaint());
+        fieldPaint.setTextSize(getTextSize());
+        int blankSpaceWidth = (int) fieldPaint.measureText(" ");
+
+        int totalChipLength = 0;
+        int chipLimit = CHIP_LIMIT;
+        for (int i = 0; i < recipients.length; i++) {
+            if (totalChipLength + recipients[i].getBounds().right + blankSpaceWidth < fieldWidth) {
+                totalChipLength += recipients[i].getBounds().right + blankSpaceWidth;
+                chipLimit = i + 1;
+            } else {
+                break;
+            }
+        }
+
+        if (recipients == null || recipients.length <= chipLimit) {
             mMoreChip = null;
             return;
         }
+
         Spannable spannable = getSpannable();
         int numRecipients = recipients.length;
-        int overage = numRecipients - CHIP_LIMIT;
-        MoreImageSpan moreSpan = createMoreSpan(overage);
+        int overage = numRecipients - chipLimit;
+
+        // Now checks if the moreSpan is not too big for the available space
+        String moreText = String.format(mMoreItem.getText().toString(), overage);
+        TextPaint morePaint = new TextPaint(getPaint());
+        morePaint.setTextSize(mMoreItem.getTextSize());
+        int moreChipWidth = (int) morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
+                + mMoreItem.getPaddingRight();
+
+        MoreImageSpan moreSpan;
+        while (totalChipLength + moreChipWidth >= fieldWidth) {
+            totalChipLength -= recipients[chipLimit - 1].getBounds().right;
+            chipLimit--;
+            overage++;
+            moreText = String.format(mMoreItem.getText().toString(), overage);
+            moreChipWidth = (int) morePaint.measureText(moreText) + mMoreItem.getPaddingLeft()
+                    + mMoreItem.getPaddingRight();
+        }
+        moreSpan = createMoreSpan(overage);
+
         mRemovedSpans = new ArrayList<>();
         int totalReplaceStart = 0;
         int totalReplaceEnd = 0;
         Editable text = getText();
-        for (int i = numRecipients - overage; i < recipients.length; i++) {
+
+        for (int i = numRecipients - overage; i < numRecipients; i++) {
             mRemovedSpans.add(recipients[i]);
             if (i == numRecipients - overage) {
                 totalReplaceStart = spannable.getSpanStart(recipients[i]);
