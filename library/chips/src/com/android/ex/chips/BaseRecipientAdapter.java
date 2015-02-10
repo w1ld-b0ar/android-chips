@@ -561,8 +561,19 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
         mContentResolver = context.getContentResolver();
         mInflater = LayoutInflater.from(context);
         mPreferredMaxResultCount = preferredMaxResultCount;
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+        Log.d(TAG, "Cache size is " + cacheSize + " kilobytes");
         if (mPhotoCacheMap == null) {
-            mPhotoCacheMap = new LruCache<Uri, byte[]>(PHOTO_CACHE_SIZE);
+            mPhotoCacheMap = new LruCache<Uri, byte[]>(cacheSize) {
+                @Override
+                protected int sizeOf(Uri key, byte[] photo) {
+                    // The cache size will be measured in kilobytes rather than number of items.
+                    return (photo.length - 4) / 1024;
+                }
+            } ;
         }
         mQueryType = queryMode;
 
@@ -819,6 +830,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
         }
     }
 
+    // TODO: shouldnt this be adapted to the phone ?
     // For reading photos for directory contacts, this is the chunksize for
     // copying from the inputstream to the output stream.
     private static final int BUFFER_SIZE = 1024*16;
@@ -965,6 +977,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
         // Following code fixes the conversion of alphabetic letters to digits when typing a name.
         // Please note that there might be better ways to do it, but this is what I ended up to do.
         // Reasoning: if the constraint does not contain any numbers, look for a name only.
+        // XXX: should handle email addresses too
         if(constraint.toString().matches(".*\\d.*")){
             // Contains a number
             selectionParameters = null;
