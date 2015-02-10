@@ -241,7 +241,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     public RecipientEditTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // XXX: would be nice to show chips as an example here
+        // TODO: would be nice to show chips as an example here
         if (isInEditMode()) {
             return;
         }
@@ -1304,7 +1304,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             dismissDropDown();
             return true;
         } else {
-            // XXX: this is a test, seems to work fine so far.
+            // TODO: this commented line is a test. It seems to work fine so far.
             //int tokenEnd = mTokenizer.findTokenEnd(editable, start);
             int tokenEnd = end;
             if (editable.length() > tokenEnd + 1) {

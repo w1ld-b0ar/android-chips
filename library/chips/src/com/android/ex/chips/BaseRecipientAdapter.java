@@ -231,7 +231,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
                         + Thread.currentThread());
             }
 
-            // XXX: it is much better to use a hint instead of that ??
+            // TODO: it is much better to use a hint instead of that
             if (constraint == null) {
                 constraint = "Choose Contacts:";
             }
@@ -330,10 +330,11 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
                 // shown to the user for use until the first directory result is returned
                 if (defaultFilterResult.entries.size() == 0 &&
                         defaultFilterResult.paramsList != null) {
-                    // XXX: not sure this is good as it shows wrong results sometimes
+                    // Not sure this is good as it shows wrong results sometimes.
+                    // It is working fine for me like that on 3 different phones
+                    // TODO: Fix it or remove it
                     //cacheCurrentEntries();
                 }
-
                 updateEntries(defaultFilterResult.entries);
 
                 // We need to search other remote directories, doing other Filter requests.
@@ -972,23 +973,25 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
         Uri uri = limit == -1 ? mQuery.getContentUri() : builder.build();
         String[] projection = mQuery.getProjection();
         String selection = (showMobileOnly && mQueryType == QUERY_TYPE_PHONE) ?
-                ContactsContract.CommonDataKinds.Phone.TYPE + "=" + ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE : null;
+                ContactsContract.CommonDataKinds.Phone.TYPE + "=" +
+                ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE : null;
         List<String> selectionParameters = new ArrayList<>();
         String sortOrder = limit == -1 ? ContactsContract.Contacts.DISPLAY_NAME + " ASC" : null;
 
         // Following code fixes the conversion of alphabetic letters to digits when typing a name.
         // Please note that there might be better ways to do it, but this is what I ended up to do.
         // Reasoning: if the constraint does not contain any numbers, look for a name only.
-        // XXX: should handle email addresses too
-        if(constraint.toString().matches(".*\\d.*")){
-            // Contains a number
-            selectionParameters = null;
-        } else{
-            // Does not contain a number
-            if (selection != null) {
-                selection = selection + " AND " + ContactsContract.Data.DISPLAY_NAME + " LIKE ?";
+        if (mQueryType == QUERY_TYPE_PHONE) {
+            if(constraint.toString().matches(".*\\d.*")){
+                // Contains a number
+                selectionParameters = null;
+            } else{
+                // Does not contain a number
+                if (selection != null) {
+                    selection = selection + " AND " + ContactsContract.Data.DISPLAY_NAME + " LIKE ?";
+                }
+                selectionParameters.add("%" + constraint + "%");
             }
-            selectionParameters.add("%" + constraint + "%");
         }
 
         String[] selectionParametersArray = selectionParameters == null ?
@@ -1009,7 +1012,10 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
                     + (end - start) + " ms");
         }
 
-        // XXX: Projection: Projection - [display_name, data1, data2, data3, contact_id, _id, photo_thumb_uri, display_name_source, lookup, mimetype]
+        // The projection for a phone number is:
+        // [display_name, data1, data2, data3, contact_id, _id,
+        //  photo_thumb_uri, display_name_source, lookup, mimetype]
+        // TODO: Not converting alphabetic chars to digit numbers when typing only letters
 
         return cursor;
     }
