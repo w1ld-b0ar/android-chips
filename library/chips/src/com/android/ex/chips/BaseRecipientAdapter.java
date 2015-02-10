@@ -231,6 +231,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
                         + Thread.currentThread());
             }
 
+            // XXX: it is much better to use a hint instead of that ??
             if (constraint == null) {
                 constraint = "Choose Contacts:";
             }
@@ -329,7 +330,8 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
                 // shown to the user for use until the first directory result is returned
                 if (defaultFilterResult.entries.size() == 0 &&
                         defaultFilterResult.paramsList != null) {
-                    cacheCurrentEntries();
+                    // XXX: not sure this is good as it shows wrong results sometimes
+                    //cacheCurrentEntries();
                 }
 
                 updateEntries(defaultFilterResult.entries);

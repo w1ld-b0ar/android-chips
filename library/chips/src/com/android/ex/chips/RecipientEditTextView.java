@@ -239,7 +239,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     public RecipientEditTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // Doesn't execute the code if is in EditMode
+        // XXX: would be nice to show chips as an example here
         if (isInEditMode()) {
             return;
         }
@@ -512,13 +512,17 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                         whatEnd = movePastTerminators(whatEnd);
                     }
                     // In the middle of chip; treat this as an edit
-                    // and commit the whole token.
-                    int selEnd = getSelectionEnd();
-                    if (whatEnd != selEnd) {
-                        handleEdit(start, whatEnd);
-                    } else {
-                        commitChip(start, end, editable);
+                    // and commit the whole token if it is not only spaces
+                    if (!editable.subSequence(start, end).toString().trim().isEmpty()) {
+                        int selEnd = getSelectionEnd();
+                        if (whatEnd != selEnd) {
+                            handleEdit(start, whatEnd);
+                        } else {
+                            commitChip(start, end, editable);
+                        }
                     }
+                } else {
+                    editable.delete(start, end);
                 }
             }
             mHandler.post(mAddTextWatcher);
@@ -767,7 +771,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * 2) the height of a chip
      * 3) padding built into the edit text view
      */
-    // XXX: change the padding in a weird way
     private int calculateOffsetFromBottom(int line) {
         // Line offsets start at zero.
         int actualLine = getLineCount() - (line + 1);
@@ -780,7 +783,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * account the width of the EditTextView, any view padding, and padding
      * that will be added to the chip.
      */
-    // XXX: need to take into account the more chip width
     private float calculateAvailableWidth() {
         return getWidth() - getPaddingLeft() - getPaddingRight() - (mChipPadding * 2);
     }
@@ -1284,7 +1286,9 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             dismissDropDown();
             return true;
         } else {
-            int tokenEnd = mTokenizer.findTokenEnd(editable, start);
+            // XXX: this is a test, seems to work fine so far.
+            //int tokenEnd = mTokenizer.findTokenEnd(editable, start);
+            int tokenEnd = end;
             if (editable.length() > tokenEnd + 1) {
                 char charAt = editable.charAt(tokenEnd + 1);
                 if (charAt == COMMIT_CHAR_COMMA || charAt == COMMIT_CHAR_SEMICOLON) {
@@ -1349,7 +1353,13 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     private boolean shouldCreateChip(int start, int end) {
-        return !mNoChips && hasFocus() && enoughToFilter() && !alreadyHasChip(start, end);
+        return !mNoChips && hasFocus() && enoughToFilter() && !alreadyHasChip(start, end)
+                && !notEnoughCharactersWhenTrimmed(start, end);
+    }
+
+    private boolean notEnoughCharactersWhenTrimmed(int start, int end) {
+        return getText().toString().substring(start, end).trim().length() < getThreshold();
+
     }
 
     private boolean alreadyHasChip(int start, int end) {
@@ -1447,6 +1457,12 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (enoughToFilter() && !isCompletedToken) {
             int end = getSelectionEnd();
             int start = mTokenizer.findTokenStart(text, end);
+
+            // If it does not contain at least two non-blank chars, does not filter
+            if (notEnoughCharactersWhenTrimmed(start ,end)) {
+                return;
+            }
+
             // If this is a RecipientChip, don't filter
             // on its contents.
             Spannable span = getSpannable();
@@ -2336,7 +2352,9 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         super.removeTextChangedListener(watcher);
     }
 
-    public void showAllContacts() {
+    // TODO: I don't think this is a good idea as it is very CPU-consuming when you have
+    // many contacts, which is the case of most of the people.
+    /*public void showAllContacts() {
         setThreshold(0);
         dismissDropDownOnItemSelected(false);
         getHandler().postDelayed(new Runnable() {
@@ -2347,7 +2365,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 setSelection(16);
             }
         }, 500);
-    }
+    }*/
 
     private class RecipientTextWatcher implements TextWatcher {
 
