@@ -568,7 +568,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
         // Use 1/8th of the available memory for this memory cache.
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        Log.d(TAG, "Cache size is " + cacheSize + " kilobytes");
+
         if (mPhotoCacheMap == null) {
             mPhotoCacheMap = new LruCache<Uri, byte[]>(cacheSize) {
                 @Override

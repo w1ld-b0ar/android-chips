@@ -146,8 +146,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private boolean mNoChips = false;
 
-    private boolean isRemovingLastCommitChar = false;
-
     private ListPopupWindow mAlternatesPopup;
 
     private ListPopupWindow mAddressPopup;
@@ -158,6 +156,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     private ArrayList<DrawableRecipientChip> mRemovedSpans;
 
     private boolean mShouldShrink = true;
+
+    private boolean isRemovingLastCommitChar = false;
 
     // Chip copy fields.
     private GestureDetector mGestureDetector;
@@ -1257,8 +1257,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             return false;
         }
         Editable editable = getText();
-        int length = editable.length();
-        Log.i("DEBUG", "Text length: " + length + "; Cursor position: " + getSelectionEnd());
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
 
@@ -1285,9 +1283,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         removeCommitCharBeforeCreatingChip();
 
         Editable editable = getText();
-        int length = editable.length();
-        Log.i("DEBUG", "Text length: " + length + "; Cursor position: " + getSelectionEnd());
-
         int end = getSelectionEnd();
         int start = mTokenizer.findTokenStart(editable, end);
 
@@ -1343,7 +1338,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         return false;
     }
 
-    protected void sanitizeBetween() {
+    // Visible for testing.
+    /* package */ void sanitizeBetween() {
         // Don't sanitize while we are waiting for content to chipify.
         if (mPendingChipsCount > 0) {
             return;
