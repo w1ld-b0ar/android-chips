@@ -7,21 +7,29 @@ This is a simple library based on Google's internal chips library and updated to
 Usage is extremely simple:
 
 ```java
-// creates an autocomplete for phone number contacts
+// Creates an Autocomplete TextView for contacts with phone number
 final RecipientEditTextView phoneRetv =
         (RecipientEditTextView) findViewById(R.id.phone_retv);
+// Sets the maximum number of chips that the user can add
+phoneRetv.setMaxNumberOfChipsAllowed(30);
+// Sets the token used to commit the chip
 phoneRetv.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+// Sets an adapter that will query phone numbers
 phoneRetv.setAdapter(new BaseRecipientAdapter(BaseRecipientAdapter.QUERY_TYPE_PHONE, this));
 ```
 
 OR
 
 ```java
-// creates an autocomplete for email contacts
+// Creates an Autocomplete TextView for contacts with email
 final RecipientEditTextView emailRetv =
         (RecipientEditTextView) findViewById(R.id.email_retv);
+// Sets the maximum number of chips that the user can add
+emailRetv.setMaxNumberOfChipsAllowed(30);
+// Sets the token used to commit the chip
 emailRetv.setTokenizer(new Rfc822Tokenizer());
-emailRetv.setAdapter(new BaseRecipientAdapter(this));
+// Sets an adapter that will query emails
+emailRetv.setAdapter(new BaseRecipientAdapter(BaseRecipientAdapter.QUERY_TYPE_EMAIL, this));
 ```
 
 You can get all of the current chips by using:
