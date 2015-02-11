@@ -373,6 +373,11 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     public Parcelable onSaveInstanceState() {
         // If the user changes orientation while they are editing, just roll back the selection.
         clearSelectedChip();
+
+        // Expand the view to adapt itself to the new orientation
+        if (!hasFocus()) {
+            expand();
+        }
         return super.onSaveInstanceState();
     }
 
