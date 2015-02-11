@@ -23,7 +23,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:paddingTop="@dimen/recipient_tb_padding"
+        android:paddingBottom="@dimen/recipient_tb_padding" >
 
         <TextView
             android:id="@+id/address_suffix"
@@ -47,7 +48,8 @@
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/address_suffix"
             android:layout_toEndOf="@id/address_suffix"
-            android:layout_margin="@dimen/chips_textfield_margin"
+            android:layout_marginLeft="@dimen/chips_textfield_lr_margin"
+            android:layout_marginRight="@dimen/chips_textfield_lr_margin"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
             android:hint="@string/phone_numbers" />
