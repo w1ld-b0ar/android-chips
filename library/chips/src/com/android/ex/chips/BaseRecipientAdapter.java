@@ -975,7 +975,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
         String selection = (showMobileOnly && mQueryType == QUERY_TYPE_PHONE) ?
                 ContactsContract.CommonDataKinds.Phone.TYPE + "=" +
                 ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE : null;
-        List<String> selectionParameters = new ArrayList<>();
+        List<String> selectionParameters = new ArrayList<String>();
         String sortOrder = limit == -1 ? ContactsContract.Contacts.DISPLAY_NAME + " ASC" : null;
 
         // Following code fixes the conversion of alphabetic letters to digits when typing a name.

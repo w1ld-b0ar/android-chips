@@ -162,7 +162,7 @@ public class VisibleRecipientChip extends ImageSpan implements DrawableRecipient
 
         if (d == null) {
             d = getDrawable();
-            mDrawableRef = new WeakReference<>(d);
+            mDrawableRef = new WeakReference<Drawable>(d);
         }
 
         return d;

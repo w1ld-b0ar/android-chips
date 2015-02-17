@@ -138,7 +138,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     private TextView mMoreItem;
 
     // VisibleForTesting
-    final ArrayList<String> mPendingChips = new ArrayList<>();
+    final ArrayList<String> mPendingChips = new ArrayList<String>();
 
     private Handler mHandler;
 
@@ -1088,7 +1088,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             // Add this chip to the list of entries "to replace"
             if (chip != null) {
                 if (mTemporaryRecipients == null) {
-                    mTemporaryRecipients = new ArrayList<>();
+                    mTemporaryRecipients = new ArrayList<DrawableRecipientChip>();
                 }
                 chip.setOriginalText(token);
                 mTemporaryRecipients.add(chip);
@@ -1868,7 +1868,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     /** Returns a collection of data Id for each chip inside this View. May be null. */
     /* package */ Collection<Long> getDataIds() {
-        final Set<Long> result = new HashSet<>();
+        final Set<Long> result = new HashSet<Long>();
         DrawableRecipientChip [] chips = getSortedRecipients();
         if (chips != null) {
             for (DrawableRecipientChip chip : chips) {
@@ -1881,7 +1881,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     public DrawableRecipientChip[] getRecipients() {
         DrawableRecipientChip[] recipients = getSpannable()
                 .getSpans(0, getText().length(), DrawableRecipientChip.class);
-        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<>(
+        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<DrawableRecipientChip>(
                 Arrays.asList(recipients));
         try { recipientsList.addAll(mRemovedSpans); } catch (Exception e) {}
         return recipientsList.toArray(new DrawableRecipientChip[recipientsList.size()]);
@@ -2068,7 +2068,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
         moreSpan = createMoreSpan(overage);
 
-        mRemovedSpans = new ArrayList<>();
+        mRemovedSpans = new ArrayList<DrawableRecipientChip>();
         int totalReplaceStart = 0;
         int totalReplaceEnd = 0;
         Editable text = getText();
@@ -2794,7 +2794,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                         @Override
                         public void matchesNotFound(final Set<String> unfoundAddresses) {
                             final List<DrawableRecipientChip> replacements =
-                                    new ArrayList<>(unfoundAddresses.size());
+                                    new ArrayList<DrawableRecipientChip>(unfoundAddresses.size());
 
                             for (final DrawableRecipientChip temp : recipients) {
                                 if (temp != null && RecipientEntry.isCreatedRecipient(
