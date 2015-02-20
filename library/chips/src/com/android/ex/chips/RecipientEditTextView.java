@@ -98,6 +98,10 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private float mChipFontSize;
 
+    private String mChipEntryErrorHint;
+
+    private String mChipOverLimitErrorHint;
+
     private float mLineSpacingExtra;
 
     private int mChipPadding;
@@ -838,6 +842,17 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (mChipFontSize == -1) {
             mChipFontSize = r.getDimension(R.dimen.chip_text_size);
         }
+
+        mChipEntryErrorHint = a.getString(R.styleable.RecipientEditTextView_chipEntryErrorHint);
+        if (mChipEntryErrorHint == null || mChipEntryErrorHint.isEmpty()) {
+            mChipEntryErrorHint = context.getString(R.string.error_invalid_chips);
+        }
+
+        mChipOverLimitErrorHint = a.getString(R.styleable.RecipientEditTextView_chipOverLimitErrorHint);
+        if (mChipOverLimitErrorHint == null || mChipOverLimitErrorHint.isEmpty()) {
+            mChipOverLimitErrorHint = context.getString(R.string.error_over_chips_limit);
+        }
+
         mInvalidChipBackground = a
                 .getDrawable(R.styleable.RecipientEditTextView_invalidChipBackground);
         if (mInvalidChipBackground == null) {
@@ -1290,7 +1305,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             setError(null);
             commitChip(start, end, editable);
         } else {
-            setError("This is not a valid phone number !");
+            setError(mChipEntryErrorHint);
         }
         setSelection(getText().length());
     }
@@ -1303,6 +1318,10 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             submitItemAtPosition(0);
             dismissDropDown();
             return true;
+        } else if (getRecipients().length >= mMaxChipsAllowed) {
+            // Check if there is not already too many chips
+            setError(mChipOverLimitErrorHint);
+            return false;
         } else {
             // TODO: this commented line is a test. It seems to work fine so far.
             //int tokenEnd = mTokenizer.findTokenEnd(editable, start);

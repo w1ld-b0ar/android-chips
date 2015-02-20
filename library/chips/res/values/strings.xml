@@ -17,6 +17,14 @@
     <!-- Text displayed when the recipientedittextview is not focused. Displays the total number of recipients since the field is shrunk to just display a portion -->
     <string name="more_string">\u002B<xliff:g id="count">%1$s</xliff:g></string>
 
+    <!-- Text displayed when the user tries adding invalid chips
+         [CHAR LIMIT=200] -->
+    <string name="error_invalid_chips">This is not a valid entry.</string>
+
+    <!-- Text displayed when the user adds more chips than the max limit allowed
+         [CHAR LIMIT=200] -->
+    <string name="error_over_chips_limit">You cannot add more chips.</string>
+
     <!-- Text displayed when the user long presses on a chip to copy the recipients email address.
          [CHAR LIMIT=200] -->
     <string name="copy_email">Copy email address</string>

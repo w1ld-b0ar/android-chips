@@ -23,6 +23,8 @@
         <attr name="chipBackgroundPressed" format="reference" />
         <attr name="chipDelete" format="reference" />
         <attr name="chipFontSize" format="reference" />
+        <attr name="chipEntryErrorHint" format="string" />
+        <attr name="chipOverLimitErrorHint" format="string" />
         <attr name="chipHeight" format="reference" />
         <attr name="chipPadding" format="reference" />
         <attr name="disableDelete" format="boolean" />
