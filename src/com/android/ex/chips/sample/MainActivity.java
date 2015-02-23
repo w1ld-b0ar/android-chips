@@ -24,6 +24,8 @@ import com.android.ex.chips.RecipientEditTextView;
 
 public class MainActivity extends Activity {
 
+    private final static int MAX_NUMBER_OF_CHIPS = 30;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +34,9 @@ public class MainActivity extends Activity {
         final RecipientEditTextView phoneRetv =
                 (RecipientEditTextView) findViewById(R.id.phone_retv);
         phoneRetv.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-        phoneRetv.setMaxNumberOfChipsAllowed(30);
+
+        // Limits the number of chips that can be added to MAX_NUMBER_OF_CHIPS
+        phoneRetv.setMaxNumberOfChipsAllowed(MAX_NUMBER_OF_CHIPS);
 
         BaseRecipientAdapter adapter =
                 new BaseRecipientAdapter(BaseRecipientAdapter.QUERY_TYPE_PHONE, this);

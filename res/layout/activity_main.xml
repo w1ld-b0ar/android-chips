@@ -13,6 +13,7 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -65,14 +66,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="@dimen/address_prefix_top_margin"
+        android:layout_marginTop="@dimen/compose_text_top_margin"
         android:layout_marginLeft="@dimen/address_prefix_lr_margin"
         android:layout_marginStart="@dimen/address_prefix_lr_margin"
         android:layout_marginRight="@dimen/address_prefix_lr_margin"
         android:layout_marginEnd="@dimen/address_prefix_lr_margin"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:inputType="text"
+        android:inputType="text|textCapSentences"
         android:hint="@string/message_field" />
 
 </LinearLayout>
