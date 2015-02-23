@@ -1,10 +1,9 @@
 # Android Chips Edit Text #
 
 
-Adding a chip                    |  Expanded text field
-:-------------------------------:|:-------------------------------------------------------:
-![](screenshots/add_a_chip.png)  |  ![](screenshots/three_chips_in_expanded_text_field.png)
-![](screenshots/three_chips_in_expanded_text_fieldpng)
+Adding a chip                    |  Expanded text field                                      |  Shrinked text field
+:-------------------------------:|:---------------------------------------------------------:|:-------------------------------------------------------:
+![](screenshots/add_a_chip.png)  |  ![](screenshots/three_chips_in_expanded_text_field.png)  |  ![](screenshots/three_chips_in_expanded_text_field.png)
 
 This is a simple library based on Google's internal chips library and updated to have visuals reflecting the newly released "Material Design" standard as seen [here](http://www.google.com/design/spec/components/chips-tokens.html#chips-tokens-contact-chips).
 
