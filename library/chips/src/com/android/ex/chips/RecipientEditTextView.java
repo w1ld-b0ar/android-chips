@@ -135,7 +135,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private DrawableRecipientChip mSelectedChip;
 
-    private Bitmap mDefaultContactPhoto;
+    private Bitmap mDefaultContactPhoto, mNoAvatarPicture;
 
     private ImageSpan mMoreChip;
 
@@ -160,8 +160,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     private ArrayList<DrawableRecipientChip> mRemovedSpans;
 
     private boolean mShouldShrink = true;
-
-    private boolean isRemovingLastCommitChar = false;
 
     // Chip copy fields.
     private GestureDetector mGestureDetector;
@@ -486,6 +484,9 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
         long contactId = mSelectedChip != null ? mSelectedChip.getEntry().getContactId() : -1;
 
+        // Clear error message before shrinking
+        setError(null);
+
         if (mSelectedChip != null && contactId != RecipientEntry.INVALID_CONTACT) {
             clearSelectedChip();
         }
@@ -522,9 +523,12 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                     if (whatEnd < text.length() && text.charAt(whatEnd) == ',') {
                         whatEnd = movePastTerminators(whatEnd);
                     }
+
                     // In the middle of chip; treat this as an edit
                     // and commit the whole token if it is not only spaces
-                    if (!editable.subSequence(start, end).toString().trim().isEmpty()) {
+                    boolean isOverMaxNumberOfChips = getRecipients().length >= mMaxChipsAllowed;
+                    if (!isOverMaxNumberOfChips &&
+                            !editable.subSequence(start, end).toString().trim().isEmpty()) {
                         int selEnd = getSelectionEnd();
                         if (whatEnd != selEnd) {
                             handleEdit(start, whatEnd);
@@ -709,7 +713,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             }
         }
 
-        return null;
+        return mNoAvatarPicture;
     }
 
     /**
@@ -832,6 +836,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
         mDefaultContactPhoto = BitmapFactory.decodeResource(r, R.drawable.ic_contact_picture);
 
+        mNoAvatarPicture = BitmapFactory.decodeResource(r, R.drawable.no_avatar_picture);
+
         mMoreItem = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.more_item, null);
 
         mChipHeight = a.getDimensionPixelSize(R.styleable.RecipientEditTextView_chipHeight, -1);
@@ -844,6 +850,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
 
         mChipEntryErrorHint = a.getString(R.styleable.RecipientEditTextView_chipEntryErrorHint);
+        Log.e(TAG, ""+mChipEntryErrorHint);
         if (mChipEntryErrorHint == null || mChipEntryErrorHint.isEmpty()) {
             mChipEntryErrorHint = context.getString(R.string.error_invalid_chips);
         }
@@ -1302,8 +1309,13 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         int start = mTokenizer.findTokenStart(editable, end);
 
         if (shouldCreateChip(start, end)) {
-            setError(null);
-            commitChip(start, end, editable);
+            // TODO: Validate that there are no bugs when checking if the user can add a chip here
+            if (!enoughRoomForAdditionalChip()) {
+                setError(mChipOverLimitErrorHint);
+            } else {
+                setError(null);
+                commitChip(start, end, editable);
+            }
         } else {
             setError(mChipEntryErrorHint);
         }
@@ -1311,17 +1323,23 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     private boolean commitChip(int start, int end, Editable editable) {
+        // Check if there is not already too many chips
+        if (getRecipients().length >= mMaxChipsAllowed) {
+            return false;
+        }
+
         ListAdapter adapter = getAdapter();
+        // TODO: is it worth disabling the autocompletion if it is a phone query ? This is
+        // potentially annoying when user types numbers (the prefix might be the same for many
+        // people), but when entering the name, this is definitely a nice feature.
+        // TODO: Can be disabled when there are no letters in the text.
+        boolean tempSCPhoneQuery = true;
         if (adapter != null && adapter.getCount() > 0 && enoughToFilter()
-                && end == getSelectionEnd() && !isPhoneQuery()) {
-            // choose the first entry.
+                && end == getSelectionEnd() && (!isPhoneQuery() && tempSCPhoneQuery)) {
+            // Choose the first entry.
             submitItemAtPosition(0);
             dismissDropDown();
             return true;
-        } else if (getRecipients().length >= mMaxChipsAllowed) {
-            // Check if there is not already too many chips
-            setError(mChipOverLimitErrorHint);
-            return false;
         } else {
             // TODO: this commented line is a test. It seems to work fine so far.
             //int tokenEnd = mTokenizer.findTokenEnd(editable, start);
@@ -1491,6 +1509,11 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      */
     @Override
     protected void performFiltering(CharSequence text, int keyCode) {
+        // Do not filter if the user cannot add additional chips
+        if (getRecipients().length >= mMaxChipsAllowed) {
+            return;
+        }
+
         boolean isCompletedToken = isCompletedToken(text);
         if (enoughToFilter() && !isCompletedToken) {
             int end = getSelectionEnd();
@@ -1832,7 +1855,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     private void submitItem(RecipientEntry entry) {
-        if (entry == null) {
+        if (entry == null || getRecipients().length >= mMaxChipsAllowed) {
+            setError(mChipOverLimitErrorHint);
             return;
         }
         clearComposingText();
@@ -2428,7 +2452,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     // TODO: I don't think this is a good idea as it is very CPU-consuming when you have
-    // many contacts, which is the case of most of the people.
+    // many contacts, which is the case of most of smartphone users. Showing a list of 16 contacts
+    // taken from one hundred or more is somewhat random and not very useful in my opinion.
     /*public void showAllContacts() {
         setThreshold(0);
         dismissDropDownOnItemSelected(false);
@@ -2513,12 +2538,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // If the triggering commit char is being deleted before processing the text,
-            // the listener is disabled
-            if (isRemovingLastCommitChar) {
-                return;
-            }
-
             // The user deleted some text OR some text was replaced; check to
             // see if the insertion point is on a space
             // following a chip.
@@ -2573,6 +2592,10 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
     }
 
+    public boolean enoughRoomForAdditionalChip() {
+        return getRecipients().length < mMaxChipsAllowed;
+    }
+
     public boolean lastCharacterIsCommitCharacter(CharSequence s) {
         char last;
         int end = getSelectionEnd() == 0 ? 0 : getSelectionEnd() - 1;
@@ -2586,7 +2609,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * enoughToFilter method.
      */
     private void removeCommitCharBeforeCreatingChip() {
-        isRemovingLastCommitChar = true;
+        removeTextChangedListener(mTextWatcher);
         Editable s = getEditableText();
         char last;
         int end = getSelectionEnd() == 0 ? 0 : getSelectionEnd() - 1;
@@ -2594,7 +2617,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (last == COMMIT_CHAR_COMMA || last == COMMIT_CHAR_SEMICOLON) {
             s.delete(end, end + 1);
         }
-        isRemovingLastCommitChar = false;
+        mHandler.post(mAddTextWatcher);
     }
 
     public boolean isGeneratedContact(DrawableRecipientChip chip) {
