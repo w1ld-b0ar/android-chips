@@ -1335,7 +1335,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         // TODO: Can be disabled when there are no letters in the text.
         boolean tempSCPhoneQuery = true;
         if (adapter != null && adapter.getCount() > 0 && enoughToFilter()
-                && end == getSelectionEnd() && (!isPhoneQuery() && tempSCPhoneQuery)) {
+                && end == getSelectionEnd() && (!isPhoneQuery() || tempSCPhoneQuery)) {
             // Choose the first entry.
             submitItemAtPosition(0);
             dismissDropDown();
