@@ -343,7 +343,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     /*package*/ DrawableRecipientChip getLastChip() {
         DrawableRecipientChip last = null;
-        DrawableRecipientChip[] chips = getSortedRecipients();
+        DrawableRecipientChip[] chips = getSortedVisibleRecipients();
         if (chips != null && chips.length > 0) {
             last = chips[chips.length - 1];
         }
@@ -949,7 +949,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private void checkChipWidths() {
         // Check the widths of the associated chips.
-        DrawableRecipientChip[] chips = getSortedRecipients();
+        DrawableRecipientChip[] chips = getSortedVisibleRecipients();
         if (chips != null) {
             Rect bounds;
             for (DrawableRecipientChip chip : chips) {
@@ -1046,7 +1046,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             return;
         }
         // Find the last chip; eliminate any commit characters after it.
-        DrawableRecipientChip[] chips = getSortedRecipients();
+        DrawableRecipientChip[] chips = getSortedVisibleRecipients();
         Spannable spannable = getSpannable();
         if (chips != null && chips.length > 0) {
             int end;
@@ -1382,7 +1382,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             return;
         }
         // Find the last chip.
-        DrawableRecipientChip[] recips = getSortedRecipients();
+        DrawableRecipientChip[] recips = getSortedVisibleRecipients();
         if (recips != null && recips.length > 0) {
             DrawableRecipientChip last = recips[recips.length - 1];
             DrawableRecipientChip beforeLast = null;
@@ -1899,7 +1899,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     /** Returns a collection of contact Id for each chip inside this View. */
     /* package */ Collection<Long> getContactIds() {
         final Set<Long> result = new HashSet<Long>();
-        DrawableRecipientChip[] chips = getSortedRecipients();
+        DrawableRecipientChip[] chips = getSortedVisibleRecipients();
         if (chips != null) {
             for (DrawableRecipientChip chip : chips) {
                 result.add(chip.getContactId());
@@ -1912,7 +1912,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     /** Returns a collection of data Id for each chip inside this View. May be null. */
     /* package */ Collection<Long> getDataIds() {
         final Set<Long> result = new HashSet<Long>();
-        DrawableRecipientChip [] chips = getSortedRecipients();
+        DrawableRecipientChip [] chips = getSortedVisibleRecipients();
         if (chips != null) {
             for (DrawableRecipientChip chip : chips) {
                 result.add(chip.getDataId());
@@ -1920,6 +1920,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
         return result;
     }
+
 
     public DrawableRecipientChip[] getRecipients() {
         DrawableRecipientChip[] recipients = getSpannable()
@@ -1930,7 +1931,11 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         return recipientsList.toArray(new DrawableRecipientChip[recipientsList.size()]);
     }
 
-    public DrawableRecipientChip[] getSortedRecipients() {
+    /**
+     * Returns a list containing the sorted visible recipients.
+     * @return Array of DrawableRecipientChip containing the sorted visible recipients
+     */
+    public DrawableRecipientChip[] getSortedVisibleRecipients() {
         DrawableRecipientChip[] recips = getSpannable()
                 .getSpans(0, getText().length(), DrawableRecipientChip.class);
         ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<>(
@@ -1951,6 +1956,43 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 }
             }
         });
+        return recipientsList.toArray(new DrawableRecipientChip[recipientsList.size()]);
+    }
+
+    /**
+     * Returns a list containing all sorted recipients, even the hidden ones when the field
+     * is shrinked.
+     * @return Array of DrawableRecipientChip containing all sorted recipients
+     */
+    // TODO: check if everything is working properly
+    public DrawableRecipientChip[] getSortedRecipients() {
+        DrawableRecipientChip[] recipients = getSortedVisibleRecipients();
+        ArrayList<DrawableRecipientChip> recipientsList = new ArrayList<>(
+                Arrays.asList(recipients));
+
+        // Recreate each removed span.
+        if (mRemovedSpans != null && mRemovedSpans.size() > 0) {
+            // Start the search for tokens after the last currently visible
+            // chip.
+            int end = getSpannable().getSpanEnd(recipients[recipients.length - 1]);
+            Editable editable = getText();
+            for (DrawableRecipientChip chip : mRemovedSpans) {
+                int chipStart;
+                String token;
+                // Need to find the location of the chip, again.
+                token = (String) chip.getOriginalText();
+                // As we find the matching recipient for the remove spans,
+                // reduce the size of the string we need to search.
+                // That way, if there are duplicates, we always find the correct
+                // recipient.
+                chipStart = editable.toString().indexOf(token, end);
+                end = Math.min(editable.length(), chipStart + token.length());
+                // Only set the span if we found a matching token.
+                if (chipStart != -1) {
+                    recipientsList.add(chip);
+                }
+            }
+        }
         return recipientsList.toArray(new DrawableRecipientChip[recipientsList.size()]);
     }
 
@@ -2065,7 +2107,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         if (tempMore.length > 0) {
             getSpannable().removeSpan(tempMore[0]);
         }
-        DrawableRecipientChip[] recipients = getSortedRecipients();
+        DrawableRecipientChip[] recipients = getSortedVisibleRecipients();
 
         int fieldWidth = getWidth() - getPaddingLeft() - getPaddingRight();
         // Compute the width of a blank space because there should be one between each chip
@@ -2158,7 +2200,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             // Re-add the spans that were removed.
             if (mRemovedSpans != null && mRemovedSpans.size() > 0) {
                 // Recreate each removed span.
-                DrawableRecipientChip[] recipients = getSortedRecipients();
+                DrawableRecipientChip[] recipients = getSortedVisibleRecipients();
                 // Start the search for tokens after the last currently visible
                 // chip.
                 if (recipients == null || recipients.length == 0) {
@@ -2759,7 +2801,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             // replaced
             final List<DrawableRecipientChip> originalRecipients =
                     new ArrayList<DrawableRecipientChip>();
-            final DrawableRecipientChip[] existingChips = getSortedRecipients();
+            final DrawableRecipientChip[] existingChips = getSortedVisibleRecipients();
             for (int i = 0; i < existingChips.length; i++) {
                 originalRecipients.add(existingChips[i]);
             }
@@ -2792,7 +2834,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             // chip.
             final ArrayList<DrawableRecipientChip> recipients =
                     new ArrayList<DrawableRecipientChip>();
-            DrawableRecipientChip[] existingChips = getSortedRecipients();
+            DrawableRecipientChip[] existingChips = getSortedVisibleRecipients();
             for (int i = 0; i < existingChips.length; i++) {
                 recipients.add(existingChips[i]);
             }
@@ -3173,6 +3215,19 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     @Override
     public BaseRecipientAdapter getAdapter() {
         return (BaseRecipientAdapter) super.getAdapter();
+    }
+
+    public void clearRecipients() {
+        getText().clear();
+
+        if (mRemovedSpans != null)
+            mRemovedSpans.clear();
+
+        if (mTemporaryRecipients != null)
+            mTemporaryRecipients.clear();
+
+        mSelectedChip = null;
+
     }
 
     @Override
