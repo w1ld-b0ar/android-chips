@@ -20,5 +20,6 @@
     <string name="message_field">Compose message</string>
     <string name="phone_numbers">Phone Numbers</string>
     <string name="address_field_prefix">To: </string>
+    <string name="demo_button_text">Show the list</string>
 
 </resources>
