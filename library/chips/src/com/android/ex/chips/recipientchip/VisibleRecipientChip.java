@@ -136,7 +136,7 @@ public class VisibleRecipientChip extends ImageSpan implements DrawableRecipient
 
         if (fm != null) {
             // Centers the text with the chips
-            if (rect.bottom - (fm.descent - fm.ascent) > 0) {
+            if (rect.bottom - (fm.descent - fm.ascent) >= 0) {
                 // Stores the initial descent and computes the margin available
                 initialDescent = fm.descent;
                 extraSpace = rect.bottom - (fm.descent - fm.ascent);
