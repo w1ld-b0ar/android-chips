@@ -17,32 +17,68 @@ package com.android.ex.chips.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 
 import com.android.ex.chips.BaseRecipientAdapter;
 import com.android.ex.chips.RecipientEditTextView;
+import com.android.ex.chips.recipientchip.DrawableRecipientChip;
 
 public class MainActivity extends Activity {
 
     private final static int MAX_NUMBER_OF_CHIPS = 30;
+
+
+    private RecipientEditTextView mPhoneRecipientField;
+    private EditText mMessageField;
+
+    private View.OnClickListener mShowListButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            DrawableRecipientChip[] recipientsList = mPhoneRecipientField.getSortedRecipients();
+            if (recipientsList == null || recipientsList.length == 0) {
+                mMessageField.setText("No recipients.");
+                return;
+            }
+
+            StringBuilder recipientList = new StringBuilder();
+            recipientList.append("List of recipients:");
+            for (int i = 0; i < recipientsList.length; i++) {
+                recipientList.append("\n * Recipient ");
+                recipientList.append(i + 1);
+                recipientList.append(": ");
+                recipientList.append(recipientsList[i].getValue());
+                recipientList.append(";");
+            }
+            mMessageField.setText(recipientList);
+        }
+    };
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final RecipientEditTextView phoneRetv =
-                (RecipientEditTextView) findViewById(R.id.phone_retv);
-        phoneRetv.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        mPhoneRecipientField = (RecipientEditTextView) findViewById(R.id.phone_retv);
+        mPhoneRecipientField.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
         // Limits the number of chips that can be added to MAX_NUMBER_OF_CHIPS
-        phoneRetv.setMaxNumberOfChipsAllowed(MAX_NUMBER_OF_CHIPS);
+        mPhoneRecipientField.setMaxNumberOfChipsAllowed(MAX_NUMBER_OF_CHIPS);
 
         BaseRecipientAdapter adapter =
                 new BaseRecipientAdapter(BaseRecipientAdapter.QUERY_TYPE_PHONE, this);
         adapter.setShowMobileOnly(true);
 
-        phoneRetv.setAdapter(adapter);
-        phoneRetv.dismissDropDownOnItemSelected(true);
+        mPhoneRecipientField.setAdapter(adapter);
+        mPhoneRecipientField.dismissDropDownOnItemSelected(true);
+
+        mMessageField = (EditText) findViewById(R.id.message_field);
+
+        Button demoButton = (Button) findViewById(R.id.demo_button);
+        demoButton.setOnClickListener(mShowListButtonClickListener);
     }
+
 }
