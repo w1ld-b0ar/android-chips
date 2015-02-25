@@ -101,6 +101,7 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
     private final int mQueryType;
 
     private boolean showMobileOnly = true;
+    private boolean showEmailOnly = true;
 
     /**
      * Model object for a {@link Directory} row.
@@ -1081,5 +1082,9 @@ public class BaseRecipientAdapter extends BaseAdapter implements Filterable, Acc
 
     public void setShowMobileOnly(boolean showMobileOnly) {
         this.showMobileOnly = showMobileOnly;
+    }
+
+    public void setShowEmailOnly(boolean showEmailOnly) {
+        this.showEmailOnly = showEmailOnly;
     }
 }

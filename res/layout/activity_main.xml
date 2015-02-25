@@ -27,6 +27,7 @@
         android:paddingTop="@dimen/recipient_tb_padding"
         android:paddingBottom="@dimen/recipient_tb_padding" >
 
+        <!-- Recipient text field -->
         <TextView
             android:id="@+id/address_suffix"
             android:layout_width="wrap_content"
@@ -53,7 +54,7 @@
             android:layout_marginRight="@dimen/chips_textfield_lr_margin"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
-            android:hint="@string/phone_numbers" />
+            android:hint="@string/recipients_field_hint" />
 
     </RelativeLayout>
 
@@ -62,6 +63,36 @@
         android:layout_height="@dimen/separator_width"
         android:background="@android:color/darker_gray" />
 
+    <!-- Subject text field -->
+    <LinearLayout
+        android:id="@+id/subject_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/subject_field"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/subject_textfield_height"
+            android:layout_marginTop="@dimen/recipient_tb_padding"
+            android:layout_marginBottom="@dimen/recipient_tb_padding"
+            android:layout_marginLeft="@dimen/address_prefix_lr_margin"
+            android:layout_marginStart="@dimen/address_prefix_lr_margin"
+            android:layout_marginRight="@dimen/address_prefix_lr_margin"
+            android:layout_marginEnd="@dimen/address_prefix_lr_margin"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:inputType="text|textCapSentences"
+            android:hint="@string/subject_field_hint" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separator_width"
+            android:background="@android:color/darker_gray" />
+
+    </LinearLayout>
+
+    <!-- Message text field -->
     <EditText
         android:id="@+id/message_field"
         android:layout_width="match_parent"
@@ -75,14 +106,6 @@
         android:background="@android:color/transparent"
         android:gravity="top"
         android:inputType="textMultiLine|textCapSentences"
-        android:hint="@string/message_field" />
-
-    <Button
-        android:id="@+id/demo_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/address_prefix_lr_margin"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/demo_button_text" />
+        android:hint="@string/message_field_hint" />
 
 </LinearLayout>

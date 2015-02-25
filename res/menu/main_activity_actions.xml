@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Send, should appear as action button -->
+    <item android:id="@+id/action_send"
+          android:icon="@android:drawable/ic_menu_send"
+          android:title="@string/menu_show_list"
+          android:showAsAction="ifRoom" />
+
+    <!-- Send, should appear as action button -->
+    <item android:id="@+id/action_switch_to_sms"
+          android:icon="@android:drawable/ic_menu_agenda"
+          android:title="@string/menu_send_sms"
+          android:showAsAction="never" />
+
+    <!-- Send, should appear as action button -->
+    <item android:id="@+id/action_switch_to_email"
+          android:icon="@android:drawable/ic_menu_agenda"
+          android:title="@string/menu_send_email"
+          android:showAsAction="never" />
+
+</menu>
