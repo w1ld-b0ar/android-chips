@@ -32,12 +32,14 @@ public class MainActivity extends Activity {
 
     private final static int MAX_NUMBER_OF_CHIPS = 30;
 
+    private final static String MESSAGE_MODE = "MESSAGE_MODE";
+
 
     private RecipientEditTextView mPhoneRecipientField;
     private View mSubjectBlock;
     private EditText mSubjectField, mMessageField;
 
-    private boolean mIsInSmsMode;
+    private boolean mIsInEmailMode = false;
 
 
     @Override
@@ -55,15 +57,26 @@ public class MainActivity extends Activity {
         // Limits the number of chips that can be added to MAX_NUMBER_OF_CHIPS
         mPhoneRecipientField.setMaxNumberOfChipsAllowed(MAX_NUMBER_OF_CHIPS);
 
-        // Sending SMS by default, but can be changed in the menu
-        sendSmsMode();
+        if (savedInstanceState != null && savedInstanceState.getBoolean(MESSAGE_MODE)) {
+            sendEmailMode();
+        } else {
+            // Sending SMS by default, but can be changed in the menu
+            sendSmsMode();
+        }
+
         mPhoneRecipientField.dismissDropDownOnItemSelected(true);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(MESSAGE_MODE, mIsInEmailMode);
     }
 
     private void showRecipientList() {
         StringBuilder recipientList = new StringBuilder();
 
-        if (!mIsInSmsMode) {
+        if (mIsInEmailMode) {
             recipientList.append("Subject: ");
             recipientList.append(mSubjectField.getText());
             recipientList.append("\n\n");
@@ -88,7 +101,7 @@ public class MainActivity extends Activity {
     }
 
     private void sendSmsMode() {
-        if (mIsInSmsMode)
+        if (!mIsInEmailMode && mSubjectField.getVisibility() == View.GONE)
             return;
 
         BaseRecipientAdapter adapter =
@@ -102,11 +115,11 @@ public class MainActivity extends Activity {
         mSubjectField.setText("");
         mMessageField.setText("");
 
-        mIsInSmsMode = true;
+        mIsInEmailMode = false;
     }
 
     private void sendEmailMode() {
-        if (!mIsInSmsMode)
+        if (mIsInEmailMode)
             return;
 
         BaseRecipientAdapter adapter =
@@ -120,7 +133,7 @@ public class MainActivity extends Activity {
         mSubjectField.setText("");
         mMessageField.setText("");
 
-        mIsInSmsMode = false;
+        mIsInEmailMode = true;
     }
 
 

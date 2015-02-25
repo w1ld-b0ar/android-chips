@@ -1921,7 +1921,6 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         return result;
     }
 
-
     public DrawableRecipientChip[] getRecipients() {
         DrawableRecipientChip[] recipients = getSpannable()
                 .getSpans(0, getText().length(), DrawableRecipientChip.class);
@@ -3218,14 +3217,14 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     }
 
     public void clearRecipients() {
+        // Clear the text field
         getText().clear();
 
-        if (mRemovedSpans != null)
+        // Clear chips that might have been stored
+        if (mRemovedSpans != null) {
             mRemovedSpans.clear();
-
-        if (mTemporaryRecipients != null)
-            mTemporaryRecipients.clear();
-
+        }
+        mTemporaryRecipients = null;
         mSelectedChip = null;
 
     }
