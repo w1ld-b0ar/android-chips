@@ -348,6 +348,7 @@ public class RecipientAlternatesAdapter extends CursorAdapter {
             Long directoryId, String lookupKey, int queryType) {
         final Cursor cursor;
         final String desiredMimeType;
+
         if (queryType == QUERY_TYPE_EMAIL) {
             final Uri uri;
             final StringBuilder selection = new StringBuilder();
@@ -365,19 +366,21 @@ public class RecipientAlternatesAdapter extends CursorAdapter {
                 uri = builder.build();
                 desiredMimeType = ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE;
             }
+
             cursor = context.getContentResolver().query(
                     uri,
                     Queries.EMAIL.getProjection(),
-                    selection.toString(), new String[] {
-                        String.valueOf(contactId)
-                    }, null);
+                    selection.toString(),
+                    new String[]{String.valueOf(contactId)},
+                    null
+            );
         } else {
             final Uri uri;
             final StringBuilder selection = new StringBuilder();
             selection.append(Queries.PHONE.getProjection()[Queries.Query.CONTACT_ID]);
             selection.append(" = ?");
 
-            if (lookupKey == null) {
+            if (directoryId == null || lookupKey == null) {
                 uri = Queries.PHONE.getContentUri();
                 desiredMimeType = null;
             } else {
@@ -388,16 +391,20 @@ public class RecipientAlternatesAdapter extends CursorAdapter {
                 uri = builder.build();
                 desiredMimeType = ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE;
             }
+
             cursor = context.getContentResolver().query(
                     uri,
                     Queries.PHONE.getProjection(),
-                    selection.toString(), new String[] {
-                        String.valueOf(contactId)
-                    }, null);
+                    selection.toString(),
+                    new String[]{String.valueOf(contactId)},
+                    null
+            );
         }
 
         final Cursor resultCursor = removeUndesiredDestinations(cursor, desiredMimeType, lookupKey);
-        if (cursor != null) cursor.close();
+        if (cursor != null) {
+            cursor.close();
+        }
 
         return resultCursor;
     }

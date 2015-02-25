@@ -850,7 +850,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
 
         mChipEntryErrorHint = a.getString(R.styleable.RecipientEditTextView_chipEntryErrorHint);
-        Log.e(TAG, ""+mChipEntryErrorHint);
+        Log.e(TAG, "" + mChipEntryErrorHint);
         if (mChipEntryErrorHint == null || mChipEntryErrorHint.isEmpty()) {
             mChipEntryErrorHint = context.getString(R.string.error_invalid_chips);
         }
@@ -1634,7 +1634,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
                 }
                 int line = getLayout().getLineForOffset(getChipStart(currentChip));
                 int bottom;
-                if (line == getLineCount() -1) {
+                if (line == getLineCount() - 1) {
                     bottom = 0;
                 } else {
                     bottom = -(int) ((mChipHeight + (2 * mLineSpacingExtra)) * (Math
