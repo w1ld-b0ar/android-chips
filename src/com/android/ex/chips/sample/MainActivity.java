@@ -28,6 +28,12 @@ import com.android.ex.chips.BaseRecipientAdapter;
 import com.android.ex.chips.RecipientEditTextView;
 import com.android.ex.chips.recipientchip.DrawableRecipientChip;
 
+
+/**
+ * This is a demo activity illustrating the android-chips library.
+ * This library allows the user creating a MultiAutoCompleteTextView with chips for each valid
+ * entries. It can be used either for phone numbers or emails.
+ */
 public class MainActivity extends Activity {
 
     private final static int MAX_NUMBER_OF_CHIPS = 30;
@@ -78,6 +84,11 @@ public class MainActivity extends Activity {
         super.onSaveInstanceState(outState);
         outState.putBoolean(MESSAGE_MODE, mIsInEmailMode);
     }
+
+
+    //
+    // Actions
+    //
 
     private void showRecipientList() {
         StringBuilder recipientList = new StringBuilder();
