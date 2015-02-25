@@ -249,9 +249,9 @@ public class RecipientAlternatesAdapter extends CursorAdapter {
                 if (Log.isLoggable(TAG, Log.DEBUG)) {
                     Log.d(TAG, "Received reverse look up information for " + address
                             + " RESULTS: "
-                            + " NAME : " + c.getString(Queries.Query.NAME)
-                            + " CONTACT ID : " + c.getLong(Queries.Query.CONTACT_ID)
-                            + " ADDRESS :" + c.getString(Queries.Query.DESTINATION));
+                            + " NAME: " + c.getString(Queries.Query.NAME)
+                            + " CONTACT ID: " + c.getLong(Queries.Query.CONTACT_ID)
+                            + " ADDRESS: " + c.getString(Queries.Query.DESTINATION));
                 }
             } while (c.moveToNext());
         }

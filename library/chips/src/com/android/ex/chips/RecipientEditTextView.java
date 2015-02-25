@@ -325,14 +325,18 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         InputConnection connection = super.onCreateInputConnection(outAttrs);
-        int imeActions = outAttrs.imeOptions&EditorInfo.IME_MASK_ACTION;
+
+        // Disable the extract UI feature in landscape
+        outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+
+        int imeActions = outAttrs.imeOptions & EditorInfo.IME_MASK_ACTION;
         if ((imeActions&EditorInfo.IME_ACTION_DONE) != 0) {
             // clear the existing action
             outAttrs.imeOptions ^= imeActions;
             // set the DONE action
             outAttrs.imeOptions |= EditorInfo.IME_ACTION_DONE;
         }
-        if ((outAttrs.imeOptions&EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0) {
+        if ((outAttrs.imeOptions & EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0) {
             outAttrs.imeOptions &= ~EditorInfo.IME_FLAG_NO_ENTER_ACTION;
         }
 
