@@ -65,6 +65,12 @@ public class MainActivity extends Activity {
         }
 
         mPhoneRecipientField.dismissDropDownOnItemSelected(true);
+        // The RecipientEditTextView must request the focus when the screen orientation changes
+        mPhoneRecipientField.post(new Runnable() {
+            public void run() {
+                mPhoneRecipientField.requestFocus();
+            }
+        });
     }
 
     @Override
