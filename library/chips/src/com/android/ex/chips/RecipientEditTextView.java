@@ -327,7 +327,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         InputConnection connection = super.onCreateInputConnection(outAttrs);
 
         // Disable the extract UI feature in landscape
-        outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+        outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
         int imeActions = outAttrs.imeOptions & EditorInfo.IME_MASK_ACTION;
         if ((imeActions&EditorInfo.IME_ACTION_DONE) != 0) {
