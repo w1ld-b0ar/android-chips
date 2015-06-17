@@ -77,8 +77,8 @@
     <ImageView
         android:id="@android:id/icon"
         style="@style/ChipIconStyle"
-        android:layout_width="40dip"
-        android:layout_height="40dip"
+        android:layout_width="@dimen/chip_icon_size"
+        android:layout_height="@dimen/chip_icon_size"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:cropToPadding="true"
