@@ -292,7 +292,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         setDropdownChipLayouter(new DropdownChipLayouter(LayoutInflater.from(context), context));
     }
 
-    protected void setDropdownChipLayouter(DropdownChipLayouter dropdownChipLayouter) {
+    public void setDropdownChipLayouter(DropdownChipLayouter dropdownChipLayouter) {
         mDropdownChipLayouter = dropdownChipLayouter;
     }
 
