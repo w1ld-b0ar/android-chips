@@ -240,6 +240,8 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     private ItemSelectedListener itemSelectedListener;
 
+    private boolean mAlternatesEnabled = true;
+
     public RecipientEditTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -2311,7 +2313,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             if (shouldShowEditableText(newChip)) {
                 scrollLineIntoView(getLayout().getLineForOffset(getChipStart(newChip)));
             }
-            showAlternates(newChip, mAlternatesPopup, getWidth());
+            if (mAlternatesEnabled) showAlternates(newChip, mAlternatesPopup, getWidth());
             setCursorVisible(false);
             return newChip;
         }
@@ -3246,6 +3248,10 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
 
     public void setPostSelectedAction(ItemSelectedListener listener) {
         itemSelectedListener = listener;
+    }
+
+    public void enableAlternates(boolean enable) {
+        mAlternatesEnabled = enable;
     }
 
     /**
