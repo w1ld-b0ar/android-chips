@@ -13,8 +13,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2 "
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     sourceSets {
         main {
@@ -38,4 +38,4 @@ android {
     }
 }
 
-apply from: 'https://raw.github.com/klinker41/gradle-mvn-push/master/gradle-mvn-push.gradle'
+//apply from: 'https://raw.github.com/klinker41/gradle-mvn-push/master/gradle-mvn-push.gradle'
