@@ -42,7 +42,7 @@
             android:alpha=".87"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textSize="16sp"/>
+            android:textSize="@dimen/chip_title_text_size"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
                 android:alpha=".54"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:textSize="14sp"/>
+                android:textSize="@dimen/chip_subtitle_text_size"/>
 
             <TextView
                 android:id="@android:id/text2"
@@ -68,7 +68,7 @@
                 android:ellipsize="end"
                 android:paddingLeft="10dp"
                 android:singleLine="true"
-                android:textSize="12sp"/>
+                android:textSize="@dimen/chip_subtitle_text_size"/>
 
         </LinearLayout>
 
