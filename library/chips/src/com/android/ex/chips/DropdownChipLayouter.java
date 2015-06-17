@@ -241,7 +241,7 @@ public class DropdownChipLayouter {
      * (an email address or a phone number).
      * By default {@link android.R.id#text1} is returned.
      */
-    protected int getDestinationResId() {
+    public int getDestinationResId() {
         return android.R.id.text1;
     }
 
@@ -249,7 +249,7 @@ public class DropdownChipLayouter {
      * Returns an id for TextView in an item View for showing the type of the destination.
      * By default {@link android.R.id#text2} is returned.
      */
-    protected int getDestinationTypeResId() {
+    public int getDestinationTypeResId() {
         return android.R.id.text2;
     }
 
@@ -257,7 +257,7 @@ public class DropdownChipLayouter {
      * Returns an id for ImageView in an item View for showing photo image for a person. In default
      * {@link android.R.id#icon} is returned.
      */
-    protected int getPhotoResId() {
+    public int getPhotoResId() {
         return android.R.id.icon;
     }
 
