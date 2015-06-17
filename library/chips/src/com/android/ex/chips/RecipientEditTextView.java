@@ -482,7 +482,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         // Do nothing. Chips handles its own validation.
     }
 
-    private void shrink() {
+    public void shrink() {
         if (mTokenizer == null) {
             return;
         }
@@ -549,7 +549,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         createMoreChip();
     }
 
-    private void expand() {
+    public void expand() {
         if (mShouldShrink) {
             setMaxLines(Integer.MAX_VALUE);
         }
@@ -1261,7 +1261,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         return super.onKeyUp(keyCode, event);
     }
 
-    private boolean focusNext() {
+    public boolean focusNext() {
         View next = focusSearch(View.FOCUS_DOWN);
         if (next != null) {
             next.requestFocus();
@@ -1858,7 +1858,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         submitItem(entry);
     }
 
-    private void submitItem(RecipientEntry entry) {
+    public void submitItem(RecipientEntry entry) {
         if (entry == null || getRecipients().length >= mMaxChipsAllowed) {
             setError(mChipOverLimitErrorHint);
             return;
@@ -2409,7 +2409,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
      * Remove the chip and any text associated with it from the RecipientEditTextView.
      */
     // Visible for testing.
-    /* package */void removeChip(DrawableRecipientChip chip) {
+    public /* package */ void removeChip(DrawableRecipientChip chip) {
         Spannable spannable = getSpannable();
         int spanStart = spannable.getSpanStart(chip);
         int spanEnd = spannable.getSpanEnd(chip);
