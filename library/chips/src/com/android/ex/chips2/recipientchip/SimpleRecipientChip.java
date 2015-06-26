@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips.recipientchip;
+package com.android.ex.chips2.recipientchip;
 
-import com.android.ex.chips.RecipientEntry;
+import com.android.ex.chips2.RecipientEntry;
 
 import android.text.TextUtils;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips;
+package com.android.ex.chips2;
 
 import android.accounts.Account;
 

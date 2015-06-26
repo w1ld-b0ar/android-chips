@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips;
+package com.android.ex.chips2;
 
 import android.accounts.Account;
 import android.content.ContentResolver;
@@ -44,7 +44,7 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 
-import com.android.ex.chips.DropdownChipLayouter.AdapterType;
+import com.android.ex.chips2.DropdownChipLayouter.AdapterType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;

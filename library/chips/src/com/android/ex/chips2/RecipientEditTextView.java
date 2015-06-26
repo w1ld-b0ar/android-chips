@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips;
+package com.android.ex.chips2;
 
 import android.app.Dialog;
 import android.content.*;
@@ -44,10 +44,10 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import com.android.ex.chips.RecipientAlternatesAdapter.RecipientMatchCallback;
-import com.android.ex.chips.recipientchip.DrawableRecipientChip;
-import com.android.ex.chips.recipientchip.InvisibleRecipientChip;
-import com.android.ex.chips.recipientchip.VisibleRecipientChip;
+import com.android.ex.chips2.RecipientAlternatesAdapter.RecipientMatchCallback;
+import com.android.ex.chips2.recipientchip.DrawableRecipientChip;
+import com.android.ex.chips2.recipientchip.InvisibleRecipientChip;
+import com.android.ex.chips2.recipientchip.VisibleRecipientChip;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -574,7 +574,7 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
         }
 
         return TextUtils.ellipsize(text, paint, maxWidth,
-                TextUtils.TruncateAt.END);
+                                   TextUtils.TruncateAt.END);
     }
 
     /**
@@ -840,9 +840,19 @@ public class RecipientEditTextView extends MultiAutoCompleteTextView implements
             mChipPadding = (int) r.getDimension(R.dimen.chip_padding);
         }
 
-        mDefaultContactPhoto = BitmapFactory.decodeResource(r, R.drawable.ic_contact_picture);
+        int defaultContactPhotoResId =
+            a.getResourceId(R.styleable.RecipientEditTextView_defaultContactPhoto, -1);
+        mDefaultContactPhoto = BitmapFactory.decodeResource(getResources(), defaultContactPhotoResId);
+        if(mDefaultContactPhoto == null) {
+            mDefaultContactPhoto = BitmapFactory.decodeResource(r, R.drawable.ic_contact_picture);
+        }
 
-        mNoAvatarPicture = BitmapFactory.decodeResource(r, R.drawable.no_avatar_picture);
+        int noAvatarPictureResId =
+            a.getResourceId(R.styleable.RecipientEditTextView_noAvatarPicture, -1);
+        mNoAvatarPicture = BitmapFactory.decodeResource(getResources(), noAvatarPictureResId);
+        if(mNoAvatarPicture == null) {
+            mNoAvatarPicture = BitmapFactory.decodeResource(r, R.drawable.no_avatar_picture);
+        }
 
         mMoreItem = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.more_item, null);
 

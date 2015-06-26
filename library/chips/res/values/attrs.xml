@@ -27,11 +27,13 @@
         <attr name="chipOverLimitErrorHint" format="string" />
         <attr name="chipHeight" format="reference" />
         <attr name="chipPadding" format="reference" />
+        <attr name="defaultContactPhoto" format="reference"/>
         <attr name="disableDelete" format="boolean" />
         <attr name="invalidChipBackground" format="reference" />
         <attr name="imageSpanAlignment">
             <enum name="bottom" value = "0"/>
             <enum name="baseline" value = "1"/>
         </attr>
+        <attr name="noAvatarPicture" format="reference"/>
     </declare-styleable>
 </resources>

@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips.recipientchip;
+package com.android.ex.chips2.recipientchip;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
-import android.util.Log;
 
-import com.android.ex.chips.RecipientEntry;
+import com.android.ex.chips2.RecipientEntry;
 
 import java.lang.ref.WeakReference;
 

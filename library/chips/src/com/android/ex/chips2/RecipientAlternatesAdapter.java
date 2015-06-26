@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips;
+package com.android.ex.chips2;
 
 import android.accounts.Account;
 import android.content.ContentResolver;
@@ -32,10 +32,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
-import com.android.ex.chips.BaseRecipientAdapter.DirectoryListQuery;
-import com.android.ex.chips.BaseRecipientAdapter.DirectorySearchParams;
-import com.android.ex.chips.DropdownChipLayouter.AdapterType;
-import com.android.ex.chips.Queries.Query;
+import com.android.ex.chips2.BaseRecipientAdapter.DirectoryListQuery;
+import com.android.ex.chips2.BaseRecipientAdapter.DirectorySearchParams;
+import com.android.ex.chips2.DropdownChipLayouter.AdapterType;
+import com.android.ex.chips2.Queries.Query;
 
 import java.util.ArrayList;
 import java.util.HashMap;

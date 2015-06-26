@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.ex.chips.sample;
+package com.android.ex.chips2.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,9 +24,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 
-import com.android.ex.chips.BaseRecipientAdapter;
-import com.android.ex.chips.RecipientEditTextView;
-import com.android.ex.chips.recipientchip.DrawableRecipientChip;
+import com.android.ex.chips2.BaseRecipientAdapter;
+import com.android.ex.chips2.RecipientEditTextView;
+import com.android.ex.chips2.recipientchip.DrawableRecipientChip;
 
 
 /**

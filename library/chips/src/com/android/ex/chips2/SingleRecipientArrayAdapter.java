@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips;
+package com.android.ex.chips2;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.android.ex.chips.DropdownChipLayouter.AdapterType;
+import com.android.ex.chips2.DropdownChipLayouter.AdapterType;
 
 class SingleRecipientArrayAdapter extends ArrayAdapter<RecipientEntry> {
     private final DropdownChipLayouter mDropdownChipLayouter;

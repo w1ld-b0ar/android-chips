@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.ex.chips.recipientchip;
+package com.android.ex.chips2.recipientchip;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.style.ReplacementSpan;
 
-import com.android.ex.chips.RecipientEntry;
+import com.android.ex.chips2.RecipientEntry;
 
 /**
  * RecipientChip defines a span that contains information relevant to a

@@ -42,7 +42,7 @@
             android:textColor="@android:color/darker_gray"
             android:text="@string/address_field_prefix" />
 
-        <com.android.ex.chips.RecipientEditTextView
+        <com.android.ex.chips2.RecipientEditTextView
             android:id="@+id/phone_retv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
